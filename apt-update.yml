@@ -1,6 +1,6 @@
 ---
 - name: Check available package updates on Debian
-  hosts: work
+  hosts: vps
   become: yes
   tasks:
     - name: Update apt cache
