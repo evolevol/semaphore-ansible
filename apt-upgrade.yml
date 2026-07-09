@@ -1,0 +1,66 @@
+---
+- name: Safe update with error handling and reporting
+  hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root 
+  gather_facts: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      register: apt_update
+      failed_when: apt_update is failed
+
+    - name: Get list of packages to upgrade (dry-run first)
+      apt:
+        upgrade: dist
+      check_mode: yes
+      register: upgrade_check
+
+    - name: Show what will be upgraded
+      debug:
+        msg: |
+          ========================================
+          Host: {{ inventory_hostname }}
+          Packages to upgrade: {{ upgrade_check.stdout_lines | length }}
+          ========================================
+          {% for line in upgrade_check.stdout_lines[:20] %}
+          {{ line }}
+          {% endfor %}
+          {% if upgrade_check.stdout_lines | length > 20 %}
+          ... and {{ upgrade_check.stdout_lines | length - 20 }} more
+          {% endif %}
+
+    - name: Confirm and proceed with upgrade
+      apt:
+        upgrade: dist
+      register: upgrade_result
+
+    - name: Clean up unused packages
+      apt:
+        autoremove: yes
+        purge: yes
+
+    - name: Display upgrade summary
+      debug:
+        msg: |
+          ========================================
+          UPDATE COMPLETED ON {{ inventory_hostname }}
+          ========================================
+          Changed: {{ upgrade_result.changed }}
+          Packages affected: {{ upgrade_result.results | length if upgrade_result.results is defined else 'N/A' }}
+
+      when: upgrade_result.changed
+
+    - name: Check for services that need restart
+      shell: |
+        checkrestart 2>/dev/null | grep -E "^Found" || echo "No services need restart"
+      register: services_to_restart
+      ignore_errors: yes
+
+    - name: Show services needing restart
+      debug:
+        var: services_to_restart.stdout_lines
+      when: services_to_restart.stdout_lines | length > 0
