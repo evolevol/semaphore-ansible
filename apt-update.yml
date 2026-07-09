@@ -1,6 +1,8 @@
 - name: Check available package updates on Debian
   hosts: all
   become: yes
+  become_method: sudo
+  become_user: root  
   tasks:
     - name: Update apt cache
       apt:
