@@ -4,22 +4,22 @@
   become: yes
   tasks:
     - name: Update apt cache
-      apt:
+       apt:
         update_cache: yes
       changed_when: false
 
     - name: Check what packages would be upgraded
-      apt:
+       apt:
         upgrade: dist  # или 'safe' для безопасного обновления
       check_mode: yes
       register: apt_upgrade_check
 
     - name: Show packages that will be upgraded
-      debug:
+       debug:
         msg: "{{ apt_upgrade_check.stdout_lines }}"
       when: apt_upgrade_check.stdout_lines | length > 0
 
     - name: Show summary if no updates
-      debug:
+       debug:
         msg: "No packages require upgrading"
       when: apt_upgrade_check.stdout_lines | length == 0
