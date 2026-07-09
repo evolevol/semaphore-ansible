@@ -1,0 +1,11 @@
+---
+- name : Install pakaces
+  host: all
+  become: yes
+
+  tasks:
+      - name: Install specefied packages
+      package:
+          name:  "{{ item }}"
+          state: present
+      loop: "{{ packages }}"
