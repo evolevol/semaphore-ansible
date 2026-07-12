@@ -1,0 +1,8 @@
+- name: Install Podkop on OpenWrt
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Run install script (no python required)
+      raw: |
+        wget -O - https://raw.githubusercontent.com/itdoginfo/podkop/refs/heads/main/install.sh | sh
