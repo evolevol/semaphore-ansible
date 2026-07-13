@@ -5,6 +5,6 @@
    tasks:
        - name: Update telemt
           community.docker.docker_compose_v2:
-               roject_src: /etc/telemt
+               project_src: /etc/telemt
                state: present
                pull: always
