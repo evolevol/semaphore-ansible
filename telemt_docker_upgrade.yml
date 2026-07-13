@@ -1,0 +1,9 @@
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Update telemt
+      community.docker.docker_compose_v2:
+        project_src: /etc/telemt
+        state: present
+        pull: always⏎    
