@@ -1,6 +1,6 @@
-- name : Install pakaces
-  host: all
-  become: yes
+- name: Install packages
+  hosts: all
+  become: true
   tasks:
     - name: Install specefied packages
       package:
