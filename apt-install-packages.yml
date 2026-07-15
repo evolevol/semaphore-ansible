@@ -1,0 +1,22 @@
+- name: Install packages apt
+  hosts: all
+  become: true
+  tasks:
+    - name: update cache apt
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Upgrade all packages to the latest version
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: install packet
+      ansible.builtin.apt:
+       pkg:
+        - curl
+        - htop
+       state: present
+
+    - name: Autoremove unused packages
+      ansible.builtin.apt:
+        autoremove: yes
